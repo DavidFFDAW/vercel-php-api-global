@@ -2,7 +2,7 @@
 
 abstract class BaseController
 {
-      protected function response(mixed $data, string $key = '', int $code = 200)
+      protected function response($data, string $key = '', int $code = 200)
       {
             $realKey = empty($key) ? 'data' : $key;
             $r = array(

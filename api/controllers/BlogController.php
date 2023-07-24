@@ -4,6 +4,7 @@ class BlogController extends BaseController
 {
       public function test()
       {
-            die($this->response([], 'data', 200));
+            throw new ApiException('Blog test gives error');
+            // die($this->response([], 'data', 200));
       }
 }
