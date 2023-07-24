@@ -1,5 +1,11 @@
 <?php
 
+$envs = array(
+      'DB_HOST' => getenv('DB_HOST'),
+      'DB_USER' => getenv('DB_USER'),
+      'FTP_USER' => getenv('FTP_USER'),
+);
+
 print_r(
       '<pre>' .
             print_r(array(
@@ -7,7 +13,8 @@ print_r(
                   'POST' => $_POST,
                   'REQUEST' => $_REQUEST,
                   'SERVER' => $_SERVER,
-                  'FILE' => $_FILE,
+                  'FILES' => $_FILE,
+                  'ENV_VARS' => $envs,
             ), true)
             . '</pre>'
 );
