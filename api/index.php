@@ -30,8 +30,13 @@ $debug = $request->getAllData();
 
 require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'index.php');
 
-$debug['routes'] = Routes::getRoutes();
+try {
 
+      $dispatcher = new RoutesDispatcher();
+      $dispatcher->dispatch(Routes::getRoutes(), $request);
+} catch (\Exception $e) {
+      die($e->getMessage());
+}
 
 print_r(
       '<pre>' .

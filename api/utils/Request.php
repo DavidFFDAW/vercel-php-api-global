@@ -17,7 +17,7 @@ class Request
             $hasPOST = isset($_POST) && !empty($_POST);
 
             $this->request = $_REQUEST;
-            $this->method = $_SERVER['REQUEST_METHOD'];
+            $this->method = strtoupper(trim($_SERVER['REQUEST_METHOD']));
             $this->requestUri = $_SERVER['REQUEST_URI'];
             $this->params = (object) $_GET;
             $this->body = $hasPOST ? (object) $_POST : (object) json_decode($getContent);

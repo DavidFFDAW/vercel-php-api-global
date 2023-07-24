@@ -1,3 +1,3 @@
 <?php
 
-Routes::get('/dashboard', BaseController::class, 'response', false);
+Routes::get('/api/test', BlogController::class, 'test', false);
