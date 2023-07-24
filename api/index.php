@@ -1,12 +1,10 @@
 <?php
-
+$dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 spl_autoload_register(function ($class) {
-      $base = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-
-      $classDirectory = $base . "classes" . DIRECTORY_SEPARATOR . "$class.php";
-      $controllerDirectory = $base . "controllers" . DIRECTORY_SEPARATOR . "$class.php";
-      $routesDirectory = $base . "routes" . DIRECTORY_SEPARATOR . "$class.php";
-      $utilsDirectory = $base . "utils" . DIRECTORY_SEPARATOR . "$class.php";
+      $classDirectory = $dir . "classes" . DIRECTORY_SEPARATOR . "$class.php";
+      $controllerDirectory = $dir . "controllers" . DIRECTORY_SEPARATOR . "$class.php";
+      $routesDirectory = $dir . "routes" . DIRECTORY_SEPARATOR . "$class.php";
+      $utilsDirectory = $dir . "utils" . DIRECTORY_SEPARATOR . "$class.php";
 
       if (file_exists($classDirectory)) require_once($classDirectory);
       if (file_exists($controllerDirectory)) require_once($controllerDirectory);
@@ -25,17 +23,14 @@ if ($method == "OPTIONS") {
       die();
 }
 
-try {
-      $envs = Env::getEnvVars();
-      $request = new Request();
-      $debug = $request->getAllData();
-} catch (\Exception $e) {
-      json_encode(array(
-            'code' => 500,
-            'error' => $e->getMessage(),
-            'message' => $e->getMessage(),
-      ), JSON_PRETTY_PRINT);
-}
+$envs = Env::getEnvVars();
+$request = new Request();
+$debug = $request->getAllData();
+
+require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'index.php');
+
+$debug['routes'] = Routes::getRoutes();
+
 
 print_r(
       '<pre>' .
