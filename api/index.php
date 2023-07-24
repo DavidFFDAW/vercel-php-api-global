@@ -1,27 +1,5 @@
 <?php
 
-
-header('Content-type: application/json');
-header('Accept: *');
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method, Authorization");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Allow: GET, POST, OPTIONS, PUT, DELETE");
-$method = $_SERVER['REQUEST_METHOD'];
-if ($method == "OPTIONS") {
-      die();
-}
-
-$envs = Env::getEnvVars();
-$request = new Request();
-$debug = $request->getAllData();
-
-print_r(
-      '<pre>' .
-            print_r($debug, true)
-            . '</pre>'
-);
-
 spl_autoload_register(function ($class) {
       $base = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 
@@ -35,3 +13,32 @@ spl_autoload_register(function ($class) {
       if (file_exists($routesDirectory)) require_once($routesDirectory);
       if (file_exists($utilsDirectory)) require_once($utilsDirectory);
 });
+
+header('Content-type: application/json');
+header('Accept: *');
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+$method = $_SERVER['REQUEST_METHOD'];
+if ($method == "OPTIONS") {
+      die();
+}
+
+try {
+      $envs = Env::getEnvVars();
+      $request = new Request();
+      $debug = $request->getAllData();
+} catch (\Exception $e) {
+      json_encode(array(
+            'code' => 500,
+            'error' => $e->getMessage(),
+            'message' => $e->getMessage(),
+      ), JSON_PRETTY_PRINT);
+}
+
+print_r(
+      '<pre>' .
+            print_r($debug, true)
+            . '</pre>'
+);
