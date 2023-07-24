@@ -2,7 +2,7 @@
 
 class RoutesDispatcher
 {
-      private function search($routes, $endpoint)
+      private function searchForRoute($routes, $endpoint)
       {
             $found = array();
 
@@ -21,19 +21,20 @@ class RoutesDispatcher
             $methodRoutes = $routes[$request->method];
             $uri = $request->requestUri;
 
-            $foundRoute = $this->search($methodRoutes, $uri);
+            if (empty($methodRoutes) || empty($uri)) throw new ApiException("There are no routes for this method and endpoint");
 
-            if (empty($foundRoute)) throw new Error("Route $uri not found");
+            $foundRoute = $this->searchForRoute($methodRoutes, $uri);
+
+            if (empty($foundRoute)) throw new ApiException("Custom Route $uri not found");
 
             $Controller = $foundRoute['class'];
             $controllerMethod = $foundRoute['method'];
 
             if (empty($Controller) || empty($controllerMethod)) {
-                  throw new Error("Controller or method are not specified correctly");
+                  throw new ApiException("Controller or method are not specified correctly");
             }
 
             $controller = new $Controller();
-
             if (!method_exists($controller, $controllerMethod)) throw new Error("Controller $controller: $controllerMethod does not exist in this controller");
 
             return $controller->$controllerMethod($request);
