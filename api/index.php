@@ -1,6 +1,7 @@
 <?php
 $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 spl_autoload_register(function ($class) {
+      global $dir;
       $classDirectory = $dir . "classes" . DIRECTORY_SEPARATOR . "$class.php";
       $controllerDirectory = $dir . "controllers" . DIRECTORY_SEPARATOR . "$class.php";
       $routesDirectory = $dir . "routes" . DIRECTORY_SEPARATOR . "$class.php";
