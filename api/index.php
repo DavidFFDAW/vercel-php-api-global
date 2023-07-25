@@ -7,12 +7,14 @@ spl_autoload_register(function ($class) {
       $routesDirectory = $dir . "routes" . DIRECTORY_SEPARATOR . "$class.php";
       $utilsDirectory = $dir . "utils" . DIRECTORY_SEPARATOR . "$class.php";
       $servicesDirectory = $dir . "services" . DIRECTORY_SEPARATOR . "$class.php";
+      $databaseDirectory = $dir . "database" . DIRECTORY_SEPARATOR . "$class.php";
 
       if (file_exists($classDirectory)) require_once($classDirectory);
       if (file_exists($controllerDirectory)) require_once($controllerDirectory);
       if (file_exists($routesDirectory)) require_once($routesDirectory);
       if (file_exists($utilsDirectory)) require_once($utilsDirectory);
       if (file_exists($servicesDirectory)) require_once($servicesDirectory);
+      if (file_exists($databaseDirectory)) require_once($databaseDirectory);
 });
 
 header('Content-type: application/json');
