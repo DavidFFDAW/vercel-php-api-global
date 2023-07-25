@@ -1,23 +1,51 @@
 <?php
 
-abstract class BaseModel
+abstract class BaseModel extends QueryBuilder implements ModelInterface
 {
-      private $conn;
-      private function __construct()
-      {
-            $env = Env::getEnvVars();
-            $this->conn = new mysqli($env['DB_HOST'], $env['DB_USER'], $env['DB_PWD'], 'wwe_2k');
+      public static $tableS = '';
+
+      public static function find($id) {
+            $sql = "SELECT * FROM `".static::$tableS."` WHERE `id` = $id";
+            return Db::getInstance()->getRow($sql);
       }
 
-      protected function getConnection()
-      {
-            return $this->conn;
+      public static function findAll() {
+            $sql = "SELECT * FROM `".static::$tableS."`";
+            return Db::getInstance()->query($sql);
       }
+      
+      public static function findBy(array $filters) {
+            $where = false;
+            $sql = "SELECT * FROM `".static::$tableS."` ";
 
-      protected function getRow($sql)
-      {
-            $sql .= " LIMIT 1";
+            foreach ($filters as $filter) {
+                  $w = ($where ? "AND WHERE " : "WHERE ");
+                  $key = $filter[0];
+                  $operator = $filter[1];
+                  $value = (strtoupper($operator) == 'LIKE') ? '%'.$filter[2].'%' : $filter[2];
+                  
+                  $sql .= $w."`$key` ".$operator." ".$value;
+            }
 
-            return $this->conn->query($sql);
+            echo $sql;
+
+            return Db::getInstance()->query($sql);
       }
+      
+      public static function findOneBy(array $filters) {
+          
+      }
+      
+      public static function create($data) {
+          
+      }
+      
+      public static function update($data) {
+          
+      }
+      
+      public static function delete($id) {
+          
+      }
+      
 }
