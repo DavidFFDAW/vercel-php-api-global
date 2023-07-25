@@ -32,7 +32,7 @@ $envs = Env::getEnvVars();
 $request = new Request();
 $debug = $request->getAllData();
 
-require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'index.php');
+require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'router.php');
 
 try {
 

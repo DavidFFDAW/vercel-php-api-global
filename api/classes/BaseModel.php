@@ -4,17 +4,7 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
 {
       public static $tableS = '';
 
-      public static function find($id) {
-            $sql = "SELECT * FROM `".static::$tableS."` WHERE `id` = $id";
-            return Db::getInstance()->getRow($sql);
-      }
-
-      public static function findAll() {
-            $sql = "SELECT * FROM `".static::$tableS."`";
-            return Db::getInstance()->query($sql);
-      }
-      
-      public static function findBy(array $filters) {
+      private static function filters(array $filters) {
             $where = false;
             $sql = "SELECT * FROM `".static::$tableS."` ";
 
@@ -26,14 +16,27 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
                   
                   $sql .= $w."`$key` ".$operator." ".$value;
             }
+            return $sql;
+      }
 
-            echo $sql;
+      public static function find($id) {
+            $sql = "SELECT * FROM `".static::$tableS."` WHERE `id` = $id";
+            return Db::getInstance()->getRow($sql);
+      }
 
+      public static function findAll() {
+            $sql = "SELECT * FROM `".static::$tableS."`";
+            return Db::getInstance()->query($sql);
+      }
+      
+      public static function findBy(array $filters) {
+            $sql = self::filters($filters);
             return Db::getInstance()->query($sql);
       }
       
       public static function findOneBy(array $filters) {
-          
+            $sql = self::filters($filters);
+            return Db::getInstance()->getRow($sql);
       }
       
       public static function create($data) {
