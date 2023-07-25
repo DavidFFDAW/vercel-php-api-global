@@ -4,7 +4,9 @@ class BlogController extends BaseController
 {
       public function test()
       {
-            throw new ApiException('Blog test gives error');
-            // die($this->response([], 'data', 200));
+            $blog = Blog::findBy([
+                  array('id', '=', 9 )
+            ]);
+            die($this->response($blog, 'blog', 200));
       }
 }
