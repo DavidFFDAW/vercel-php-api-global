@@ -3,13 +3,13 @@ $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 define('API', $dir);
 
 spl_autoload_register(function ($class) {
-      $classDirectory = API."classes" . DIRECTORY_SEPARATOR . "$class.php";
-      $controllerDirectory = API."controllers" . DIRECTORY_SEPARATOR . "$class.php";
-      $routesDirectory = API."routes" . DIRECTORY_SEPARATOR . "$class.php";
-      $utilsDirectory = API."utils" . DIRECTORY_SEPARATOR . "$class.php";
-      $servicesDirectory = API."services" . DIRECTORY_SEPARATOR . "$class.php";
-      $databaseDirectory = API."database" . DIRECTORY_SEPARATOR . "$class.php";
-      $middlewareDirectory = API."middlewares" . DIRECTORY_SEPARATOR . "$class.php";
+      $classDirectory = API . "classes" . DIRECTORY_SEPARATOR . "$class.php";
+      $controllerDirectory = API . "controllers" . DIRECTORY_SEPARATOR . "$class.php";
+      $routesDirectory = API . "routes" . DIRECTORY_SEPARATOR . "$class.php";
+      $utilsDirectory = API . "utils" . DIRECTORY_SEPARATOR . "$class.php";
+      $servicesDirectory = API . "services" . DIRECTORY_SEPARATOR . "$class.php";
+      $databaseDirectory = API . "database" . DIRECTORY_SEPARATOR . "$class.php";
+      $middlewareDirectory = API . "middlewares" . DIRECTORY_SEPARATOR . "$class.php";
 
       if (file_exists($classDirectory)) require_once($classDirectory);
       if (file_exists($controllerDirectory)) require_once($controllerDirectory);
@@ -32,14 +32,12 @@ if ($method == "OPTIONS") {
 }
 
 $envs = Env::getEnvVars();
-$request = Request::getInstance();
-
-require_once(API . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'router.php');
 
 try {
+      require_once(API . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'routes.php');
 
-      $dispatcher = new RoutesDispatcher();
-      $dispatcher->dispatch(Routes::getRoutes(), $request);
+      // $dispatcher = new RoutesDispatcher();
+      // $dispatcher->dispatch(Routes::getRoutes(), $request);
 } catch (ApiException $e) {
       die(Errors::getErrorObject($e, 'ApiException'));
 } catch (Error $err) {
