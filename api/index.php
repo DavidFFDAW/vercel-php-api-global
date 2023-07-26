@@ -1,5 +1,7 @@
 <?php
 $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+define('API', $dir);
+
 spl_autoload_register(function ($class) {
       global $dir;
       $classDirectory = $dir . "classes" . DIRECTORY_SEPARATOR . "$class.php";
@@ -29,7 +31,7 @@ if ($method == "OPTIONS") {
 }
 
 $envs = Env::getEnvVars();
-$request = new Request();
+$request = Request::getInstance();
 $debug = $request->getAllData();
 
 require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'router.php');
