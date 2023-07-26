@@ -1,5 +1,6 @@
-<?php 
+<?php
 
-interface ItMiddleware {
+interface ItMiddleware
+{
     public function execute(Request $req);
 }
