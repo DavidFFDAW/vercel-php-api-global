@@ -2,6 +2,11 @@
 
 $request = Request::getInstance();
 $router = new Router($request);
+$common = "/api/2k";
 
-$router->get('/api/blog/all', BlogController::class, 'getBlogPosts');
-$router->get('/api/blog/single/post/{id}', BlogController::class, 'getSingleBlogPost');
+/* BLOG ROUTES */
+$router->get("$common/blog/all", BlogController::class, 'getBlogPosts');
+$router->get("$common/blog/single/post/{id}", BlogController::class, 'getSingleBlogPost');
+
+/* AUTH/USER ROUTES */
+$router->post("$common/auth/login", UserController::class, 'login');

@@ -1,7 +1,5 @@
 <?php
 
-use function PHPSTORM_META\type;
-
 class Request
 {
       public $request;
@@ -13,10 +11,12 @@ class Request
       public $headers;
       public $files;
       public $cookies;
+      private $user;
 
       private static $instance = null;
 
-      public static function getInstance() {
+      public static function getInstance()
+      {
             if (self::$instance == null || self::$instance instanceof Request) {
                   self::$instance = new Request();
             }
@@ -41,19 +41,36 @@ class Request
 
       public function bearerToken()
       {
-            $token = $this->headers['Authorization'];
+            $token = isset($this->headers['Authorizations']) ? $this->headers['Authorization'] : '';
             $token = str_replace('Bearer', '', $token);
             return trim($token);
       }
 
-      public function getURI() {
+      public function getURI()
+      {
             return $this->URI;
       }
 
-      public function setParameters(array $params) {
+      public function getUser()
+      {
+            return $this->user;
+      }
+
+      public function getRequestMethod()
+      {
+            return $this->method;
+      }
+
+      public function setParameters(array $params)
+      {
             $this->params = (object) $params;
 
             return $this;
+      }
+
+      public function setUser($user)
+      {
+            $this->user = $user;
       }
 
       public function getAllData()
