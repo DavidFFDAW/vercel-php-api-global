@@ -2,15 +2,28 @@
 
 class RoutesDispatcher
 {
-      private function convertRoute($routeObject, $endpoint, Request $request) {
+      private function matchSimpleRoute($baseRoute, Request $req) {
+            $URI = $req->getURI();
+            $route = preg_replace("/(^\/)|(\/$)/","",$baseRoute);
+            $reqUri = empty($URI) ? '/' : preg_replace("/(^\/)|(\/$)/","",$URI);
+
+            return $reqUri == $route;
+      }
+
+      private function convertRoute($routeObject, $baseEndpoint, Request $request) {
             $params = [];
             $paramKey = [];
-            $reqUri = $endpoint;
+            $reqUri = $baseEndpoint;
+            $match = false;
 
-            $route = $routeObject['endpoint'];
-            $route = preg_replace("/(^\/)|(\/$)/","", $route);
+            $baseRoute = $routeObject['endpoint'];
+            $route = preg_replace("/(^\/)|(\/$)/","", $baseRoute);
+            $endpoint = preg_replace("/(^\/)|(\/$)/", "", $baseEndpoint);
             preg_match_all("/(?<={).+?(?=})/", $route, $paramMatches);
+
             $hasParams = !empty($paramMatches[0]);
+
+            if (!$hasParams) return $this->matchSimpleRoute($baseRoute, $baseEndpoint, $request);
 
             if ($hasParams) {
                   foreach($paramMatches[0] as $key){
@@ -51,7 +64,6 @@ class RoutesDispatcher
       private function searchForRoute($routes, $endpoint, Request $request)
       {
             $found = array();
-            $endpoint = preg_replace("/(^\/)|(\/$)/", "", $endpoint);
             
             foreach ($routes as $route) {
                   $doRouteMatch = $this->convertRoute($route, $endpoint, $request);
@@ -81,6 +93,14 @@ class RoutesDispatcher
 
             if (empty($Controller) || empty($controllerMethod)) {
                   throw new ApiException("Controller or method are not specified correctly");
+            }
+
+            $middlewares = $foundRoute['middlewares'];
+            if (!empty($middlewares)) {
+                  foreach ($middlewares as $Middleware) {
+                        $middleware = new $Middleware();
+                        $middleware->execute($request);
+                  }
             }
 
             $controller = new $Controller();

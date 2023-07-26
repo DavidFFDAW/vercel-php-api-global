@@ -3,13 +3,13 @@ $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 define('API', $dir);
 
 spl_autoload_register(function ($class) {
-      global $dir;
-      $classDirectory = $dir . "classes" . DIRECTORY_SEPARATOR . "$class.php";
-      $controllerDirectory = $dir . "controllers" . DIRECTORY_SEPARATOR . "$class.php";
-      $routesDirectory = $dir . "routes" . DIRECTORY_SEPARATOR . "$class.php";
-      $utilsDirectory = $dir . "utils" . DIRECTORY_SEPARATOR . "$class.php";
-      $servicesDirectory = $dir . "services" . DIRECTORY_SEPARATOR . "$class.php";
-      $databaseDirectory = $dir . "database" . DIRECTORY_SEPARATOR . "$class.php";
+      $classDirectory = API."classes" . DIRECTORY_SEPARATOR . "$class.php";
+      $controllerDirectory = API."controllers" . DIRECTORY_SEPARATOR . "$class.php";
+      $routesDirectory = API."routes" . DIRECTORY_SEPARATOR . "$class.php";
+      $utilsDirectory = API."utils" . DIRECTORY_SEPARATOR . "$class.php";
+      $servicesDirectory = API."services" . DIRECTORY_SEPARATOR . "$class.php";
+      $databaseDirectory = API."database" . DIRECTORY_SEPARATOR . "$class.php";
+      $middlewareDirectory = API."middlewares" . DIRECTORY_SEPARATOR . "$class.php";
 
       if (file_exists($classDirectory)) require_once($classDirectory);
       if (file_exists($controllerDirectory)) require_once($controllerDirectory);
@@ -17,6 +17,7 @@ spl_autoload_register(function ($class) {
       if (file_exists($utilsDirectory)) require_once($utilsDirectory);
       if (file_exists($servicesDirectory)) require_once($servicesDirectory);
       if (file_exists($databaseDirectory)) require_once($databaseDirectory);
+      if (file_exists($middlewareDirectory)) require_once($middlewareDirectory);
 });
 
 header('Content-type: application/json');
@@ -32,9 +33,8 @@ if ($method == "OPTIONS") {
 
 $envs = Env::getEnvVars();
 $request = Request::getInstance();
-$debug = $request->getAllData();
 
-require_once($dir . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'router.php');
+require_once(API . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'router.php');
 
 try {
 
@@ -47,9 +47,3 @@ try {
 } catch (Exception $exception) {
       die(Errors::getErrorObject($exception, 'Exception'));
 }
-
-print_r(
-      '<pre>' .
-            print_r($debug, true)
-            . '</pre>'
-);
