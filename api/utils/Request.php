@@ -41,7 +41,7 @@ class Request
 
       public function bearerToken()
       {
-            $token = isset($this->headers['Authorizations']) ? $this->headers['Authorization'] : '';
+            $token = isset($this->headers['Authorization']) ? $this->headers['Authorization'] : '';
             $token = str_replace('Bearer', '', $token);
             return trim($token);
       }
