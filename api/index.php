@@ -1,6 +1,8 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 define('API', $dir);
+define('DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
 spl_autoload_register(function ($class) {
       $classDirectory = API . "classes" . DIRECTORY_SEPARATOR . "$class.php";
@@ -19,6 +21,8 @@ spl_autoload_register(function ($class) {
       if (file_exists($databaseDirectory)) require_once($databaseDirectory);
       if (file_exists($middlewareDirectory)) require_once($middlewareDirectory);
 });
+
+define('DEV', $_SERVER['HTTP_HOST'] == 'localhost:8555');
 
 header('Content-type: application/json');
 header('Accept: *');
@@ -39,7 +43,7 @@ try {
       // $dispatcher = new RoutesDispatcher();
       // $dispatcher->dispatch(Routes::getRoutes(), $request);
 } catch (ApiException $e) {
-      die(Errors::getErrorObject($e, 'ApiException'));
+      die(Errors::getAPIErrorObject($e, 'ApiException'));
 } catch (Error $err) {
       die(Errors::getErrorObject($err, 'Error'));
 } catch (Exception $exception) {
