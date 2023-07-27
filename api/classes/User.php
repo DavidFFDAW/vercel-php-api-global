@@ -3,7 +3,6 @@
 class User extends BaseModel
 {
 
-    public $table = 'users';
     public static $tableS = 'users';
 
     public static function getUserByToken(string $token)
