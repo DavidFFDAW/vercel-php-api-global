@@ -4,6 +4,13 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
 {
       public static $tableS = '';
 
+      protected $parentAttributes = array(
+            array( 'db_name' => 'id',           'api_name' => 'id',       'required' => false, 'type' => 'i'),
+            array( 'db_name' => 'created_at',   'api_name' => 'created',  'required' => false, 'type' => 's'),
+            array( 'db_name' => 'updated_at',   'api_name' => 'updated',  'required' => false, 'type' => 's'),
+      );
+      protected $attributes;
+
       private static function filters(array $filters) {
             $where = false;
             $sql = "SELECT * FROM `".static::$tableS."` ";
@@ -17,6 +24,50 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
                   $sql .= $w."`$key` ".$operator." ".$value;
             }
             return $sql;
+      }
+
+      public function getParsedRequiredAttributes($body) {
+            $final = array();
+            $postBody = (array) $body;
+
+            foreach($this->attributes as $attribute) {
+                  if ( $attribute['required']) {
+                        $currentAttr = isset($postBody[$attribute['api_name']]) ? $postBody[$attribute['api_name']] : '';
+                        $final[$attribute['db_name']] = $currentAttr;
+                  }
+            }
+
+            return $final;
+      }
+      
+
+      public function getParsedFields($body) {
+            $final = array();
+            $postBody = (array) $body;
+
+            foreach($this->attributes as $attribute) {
+                  $currentAttr = isset($postBody[$attribute['api_name']]) ? $postBody[$attribute['api_name']] : '';
+                  $final[$attribute['db_name']] = $currentAttr;
+            }
+
+            return $final;
+      }
+
+      public function emptiesRequiredDatas($body) {
+            $required = $this->getParsedRequiredAttributes($body);
+            $missingDatas = array();
+
+            foreach ($required as $key => $_) {
+                  if (empty($required[$key])) {
+                        $missingDatas[] = $key;
+                  }
+            }
+
+            return count($missingDatas) > 0 ? (implode(', ', $missingDatas)) : [];
+      }
+
+      public function getAttr() {
+            return $this->attributes;
       }
 
       public static function find($id) {

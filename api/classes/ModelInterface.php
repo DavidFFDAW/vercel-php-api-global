@@ -8,4 +8,5 @@ interface ModelInterface {
     public static function create($data);
     public static function update($data);
     public static function delete($id);
+    public function emptiesRequiredDatas($body);
 }
