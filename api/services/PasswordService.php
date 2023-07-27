@@ -1,6 +1,6 @@
 <?php
 
-class BcryptService
+class PasswordService
 {
 
     public static function generate(string $pwd)
