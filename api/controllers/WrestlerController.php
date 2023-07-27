@@ -62,7 +62,8 @@ class WrestlerController extends BaseController {
 
 
     public function upsert(Request $req) {
-        
+        $wrestler = new Wrestler();
+        $this->checkDatas($wrestler, $req->body);
     }
     
     public function statusChange(Request $req) {
