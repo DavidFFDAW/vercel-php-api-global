@@ -2,10 +2,12 @@
 
 class Debug {
     public static function dd($vars, $exit = true) {
-        if ($exit) {
-            print_r("<pre>".print_r($vars, true)."</pre>");
-            die();
-        }
         print_r("<pre>".print_r($vars, true)."</pre>");
+        if ($exit) die();
+    }
+
+    public static function ddAPI($vars, $exit = true) {
+        echo json_encode($vars, JSON_PRETTY_PRINT);
+        if ($exit) die();
     }
 }
