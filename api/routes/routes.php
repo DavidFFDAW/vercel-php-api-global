@@ -15,7 +15,7 @@ $router->post("$common/auth/login", UserController::class, 'login');
 $router->get("$common/wrestlers/all", WrestlerController::class, 'getAll');
 $router->get("$common/wrestlers/released", WrestlerController::class, 'getReleasedWrestlers');
 $router->get("$common/wrestlers/active", WrestlerController::class, 'getActiveWrestlers');
-$router->get("$common/wrestlers/single/:id", WrestlerController::class, 'getSingleWrestler');
+$router->get("$common/wrestlers/single/{id}", WrestlerController::class, 'getSingleWrestler');
 $router->post("$common/wrestlers/upsert", WrestlerController::class, 'upsert', [ AuthMiddleware::class ]);
 $router->put("$common/wrestlers/status/change", WrestlerController::class, 'statusChange', [ AuthMiddleware::class ]);
 $router->delete("$common/wrestlers/delete/{id}", WrestlerController::class, 'delete', [ AuthMiddleware::class ]);
