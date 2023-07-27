@@ -13,6 +13,15 @@ abstract class BaseController
             return isset($condition) && !empty($condition);
       }
 
+      protected function checkDatas(ModelInterface $model, $body) {
+            $missedDatas = $model->emptiesRequiredDatas($body);
+            $isThereAnError = !empty($missedDatas);
+
+            if ($isThereAnError) throw new ApiException("[$missedDatas] are required", 404);
+
+            return $isThereAnError;
+      } 
+
       protected function response($data, string $key = '', int $code = 200)
       {
             $realKey = empty($key) ? 'data' : $key;
