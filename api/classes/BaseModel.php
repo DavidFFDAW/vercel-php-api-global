@@ -50,5 +50,9 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
       public static function delete($id) {
           
       }
+
+      public static function query(string $sql) {
+            return Db::getInstance()->query($sql);
+      }
       
 }
