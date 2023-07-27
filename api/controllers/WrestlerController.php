@@ -8,12 +8,12 @@ class WrestlerController extends BaseController {
     }
 
     public function getActiveWrestlers() {
-        $active = Wrestler::findBy([ array('status', '=', 'active') ]);
+        $active = Wrestler::findBy([ array('status', '=', "'active'") ]);
         return $this->response($active, 'wrestlers');
     }
 
     public function getReleasedWrestlers() {
-        $released = Wrestler::findBy([ array('status', '=', 'released') ]);
+        $released = Wrestler::findBy([ array('status', '=', "'released'") ]);
         return $this->response($released, 'wrestlers');
     }
 
