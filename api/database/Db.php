@@ -40,7 +40,8 @@ class Db {
     public function getRow($sql)
     {
         $sql .= " LIMIT 1";
+        $result = $this->query($sql);
 
-        return $this->query($sql)[0];
+        return isset($result[0]) && !empty($result) ? $result[0] : array();
     }
 }
