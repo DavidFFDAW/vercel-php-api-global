@@ -1,23 +1,28 @@
 <?php
-    
-class WrestlerController extends BaseController {
 
-    public function getAll() {
+class WrestlerController extends BaseController
+{
+
+    public function getAll()
+    {
         $wrestlers = Wrestler::findAll();
         return $this->response($wrestlers, 'wrestlers');
     }
 
-    public function getActiveWrestlers() {
-        $active = Wrestler::findBy([ array('status', '=', "'active'") ]);
+    public function getActiveWrestlers()
+    {
+        $active = Wrestler::findBy([array('status', '=', "active")]);
         return $this->response($active, 'wrestlers');
     }
 
-    public function getReleasedWrestlers() {
-        $released = Wrestler::findBy([ array('status', '=', "'released'") ]);
+    public function getReleasedWrestlers()
+    {
+        $released = Wrestler::findBy([array('status', '=', "released")]);
         return $this->response($released, 'wrestlers');
     }
 
-    public function findWithChampionships() {
+    public function findWithChampionships()
+    {
         $final = array();
         $sql = "SELECT wr.id, wr.name, wr.sex AS sex, wr.brand AS brand, wr.status AS status, wr.image_name AS image, wr.overall AS overall,
         ( SELECT chs.name FROM wrestler w INNER JOIN championship_reigns chr ON chr.wrestler_id = w.id INNER JOIN championship chs ON chs.id = chr.championship_id WHERE w.id = wr.id AND chs.tag = FALSE AND chr.current = TRUE AND chs.active = TRUE ) AS championship ,
@@ -50,27 +55,28 @@ class WrestlerController extends BaseController {
         return $this->response($final, 'wrestlers', 200);
     }
 
-    public function getSingleWrestler(Request $req) {
+    public function getSingleWrestler(Request $req)
+    {
         $id = $this->getTheRequestID($req);
         $singleWrestler = Wrestler::find($id);
 
         if (empty($singleWrestler)) throw new ApiException("Impossible to retrieve a wrestler with this ID");
 
         return $this->response($singleWrestler, "wrestler", 200);
-        
     }
 
 
-    public function upsert(Request $req) {
-        
+    public function upsert(Request $req)
+    {
     }
-    
-    public function statusChange(Request $req) {
-        
+
+    public function statusChange(Request $req)
+    {
     }
 
 
-    public function delete(Request $req) {
+    public function delete(Request $req)
+    {
         $id = $this->getTheRequestID($req);
         $deleted = Wrestler::delete($id);
 
