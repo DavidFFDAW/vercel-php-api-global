@@ -35,6 +35,11 @@ class Db
         return $this->conn->real_escape_string($str);
     }
 
+    public function prepare($sql)
+    {
+        return $this->conn->prepare($sql);
+    }
+
 
     public function query($sq)
     {
