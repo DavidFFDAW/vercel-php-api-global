@@ -6,7 +6,6 @@ interface ModelInterface
     public static function findAll();
     public static function findBy(array $filters);
     public static function findOneBy(array $filters);
-    public function create($data);
     public function upsert($data);
     public static function delete($id);
     public function getRequiredAttributesParsed(array $body);
