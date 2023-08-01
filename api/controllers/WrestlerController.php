@@ -71,19 +71,22 @@ class WrestlerController extends BaseController
         $wrestler = new Wrestler();
         $body = $this->getCheckedDatas($wrestler, $req->body);
         $result = $wrestler->upsert($body);
-        Debug::ddAPI($body);
+        $code = $result['upderted'] ? 204 : 500;
+        
+        return $this->response($result, 'result', $code);
     }
 
-    public function statusChange(Request $req)
-    {
-    }
+    // public function statusChange(Request $req)
+    // {
+    // }
 
 
     public function delete(Request $req)
     {
         $id = $this->getTheRequestID($req);
         $deleted = Wrestler::delete($id);
+        $code = $deleted['deleted'] ? 204 : 500;
 
-        return $this->response($deleted, 'deleted', 200);
+        return $this->response($deleted, 'result', $code);
     }
 }
