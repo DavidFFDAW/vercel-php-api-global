@@ -1,30 +1,31 @@
 <?php
-    
-class Wrestler extends BaseModel {
-    
+
+class Wrestler extends BaseModel
+{
+
     public static $tableS = 'wrestler';
-    protected $attributes;
+    public $_table = 'wrestler';
+    protected $attributes = array();
 
     public function __construct()
     {
-        // $this->attributes = array_merge($this->parentAttributes, array(
         $this->attributes = array(
-            array( 'db_name' => 'name',           'api_name' => 'name',      'required' => true,   'type' => 's'),
-            array( 'db_name' => 'alias',          'api_name' => 'alias',     'required' => true,   'type' => 's'),
-            array( 'db_name' => 'sex',            'api_name' => 'gender',    'required' => true,   'type' => 's'),
-            array( 'db_name' => 'brand',          'api_name' => 'brand',     'required' => true,   'type' => 's'),
-            array( 'db_name' => 'status',         'api_name' => 'status',    'required' => true,   'type' => 's'),
-            array( 'db_name' => 'is_tag',         'api_name' => 'tag',       'required' => false,  'type' => 'i'),
-            array( 'db_name' => 'is_champ',       'api_name' => 'champ',     'required' => false,  'type' => 'i'),
-            array( 'db_name' => 'twitter_acc',    'api_name' => 'tw_acc',    'required' => true,   'type' => 's'),
-            array( 'db_name' => 'twitter_name',   'api_name' => 'tw_name',   'required' => true,   'type' => 's'),
-            array( 'db_name' => 'finisher',       'api_name' => 'finisher',  'required' => true,   'type' => 's'),
-            array( 'db_name' => 'image_name',     'api_name' => 'image',     'required' => false,  'type' => 's'),
-            array( 'db_name' => 'kayfabe_status', 'api_name' => 'kayfabe',   'required' => true,   'type' => 's'),
-            array( 'db_name' => 'twitter_image',  'api_name' => 'tw_image',  'required' => false,  'type' => 's'),
-            array( 'db_name' => 'overall',        'api_name' => 'overall',   'required' => true,   'type' => 'i'),
-            array( 'db_name' => 'categories',     'api_name' => 'category',  'required' => false,  'type' => 's'),
-        );    
-        // ));    
+            'id' => new Field('id',           'id',        false, 'i'),
+            'name' => new Field('name',           'name',        true, 's'),
+            'alias' => new Field('alias',          'alias',      false, 's'),
+            'sex' => new Field('sex',            'sex',         true, 's'),
+            'brand' => new Field('brand',          'brand',       true, 's'),
+            'status' => new Field('status',         'status',      true, 's'),
+            'is_tag' => new Field('is_tag',         'is_tag',     false, 'i'),
+            'is_champ' => new Field('is_champ',       'is_champ',   false, 'i'),
+            'tw_account' => new Field('twitter_acc',    'tw_account',  true, 's'),
+            'tw_name' => new Field('twitter_name',   'tw_name',     true, 's'),
+            'finisher' => new Field('finisher',       'finisher',    true, 's'),
+            'image' => new Field('image_name',     'image',      false, 's'),
+            'kayfabe' => new Field('kayfabe_status', 'kayfabe',     true, 's'),
+            'tw_image' => new Field('twitter_image',  'tw_image',   false, 's'),
+            'overall' => new Field('overall',        'overall',     true, 'i'),
+            'category' => new Field('categories',     'category',   false, 's'),
+        );
     }
 }

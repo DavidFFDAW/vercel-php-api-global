@@ -3,107 +3,155 @@
 abstract class BaseModel extends QueryBuilder implements ModelInterface
 {
       public static $tableS = '';
+      public $_table = '';
+      protected $attributes = array();
 
-      protected $parentAttributes = array(
-            array( 'db_name' => 'id',           'api_name' => 'id',       'required' => false, 'type' => 'i'),
-            array( 'db_name' => 'created_at',   'api_name' => 'created',  'required' => false, 'type' => 's'),
-            array( 'db_name' => 'updated_at',   'api_name' => 'updated',  'required' => false, 'type' => 's'),
-      );
-      protected $attributes;
-
-      private static function filters(array $filters) {
+      private static function filters(array $filters)
+      {
             $where = false;
-            $sql = "SELECT * FROM `".static::$tableS."` ";
+            $db = Db::getInstance();
+            $sql = "SELECT * FROM `" . static::$tableS . "` ";
 
             foreach ($filters as $filter) {
                   $w = ($where ? "AND WHERE " : "WHERE ");
-                  $key = $filter[0];
-                  $operator = $filter[1];
-                  $value = (strtoupper($operator) == 'LIKE') ? '%'.$filter[2].'%' : $filter[2];
-                  
-                  $sql .= $w."`$key` ".$operator." ".$value;
+                  $key = $db->scape($filter[0]);
+                  $operator = $db->scape($filter[1]);
+                  $isLike = (strtoupper($operator) == 'LIKE');
+                  $value = $db->scape($isLike ? '%' . $filter[2] . '%' : $filter[2]);
+                  $finalValue = gettype($value) === 'string' ? "'" . $value . "'" : $value;
+
+                  $sql .= $w . "`$key` " . $operator . " " . ($finalValue);
             }
+
             return $sql;
       }
 
-      public function getParsedRequiredAttributes($body) {
+      public function getAttributesParsed($body, $key = 'db_name')
+      {
             $final = array();
-            $postBody = (array) $body;
+            $body = (array) $body;
 
-            foreach($this->attributes as $attribute) {
-                  if ( $attribute['required']) {
-                        $currentAttr = isset($postBody[$attribute['api_name']]) ? $postBody[$attribute['api_name']] : '';
-                        $final[$attribute['db_name']] = $currentAttr;
+            foreach ($this->attributes as $attribute) {
+                  $apiName = $attribute->getAPIName();
+
+                  if (isset($body[$apiName]) && !empty($body[$apiName])) {
+                        $final[$apiName] = $body[$apiName];
                   }
             }
 
             return $final;
       }
-      
 
-      public function getParsedFields($body) {
+      public function getRequiredAttributesParsed($body, $key = 'api_name')
+      {
             $final = array();
-            $postBody = (array) $body;
+            $body = (array) $body;
 
-            foreach($this->attributes as $attribute) {
-                  $currentAttr = isset($postBody[$attribute['api_name']]) ? $postBody[$attribute['api_name']] : '';
-                  $final[$attribute['db_name']] = $currentAttr;
+            foreach ($this->attributes as $attribute) {
+                  if ($attribute->isRequired()) {
+                        $apiName = $attribute->getAPIName();
+                        $final[$apiName] = isset($body[$apiName]) ? $body[$apiName] : '';
+                  }
             }
 
             return $final;
       }
 
-      public function emptiesRequiredDatas($body) {
-            $required = $this->getParsedRequiredAttributes($body);
-            $missingDatas = array();
+      public static function find($id)
+      {
+            $db = Db::getInstance();
+            $sql = "SELECT * FROM `" . static::$tableS . "` WHERE `id` = " . $db->scape($id);
+            return $db->getRow($sql);
+      }
 
-            foreach ($required as $key => $_) {
-                  if (empty($required[$key])) {
-                        $missingDatas[] = $key;
+      public static function findAll()
+      {
+            $sql = "SELECT * FROM `" . static::$tableS . "`";
+            return Db::getInstance()->query($sql);
+      }
+
+      public static function findBy(array $filters)
+      {
+            $sql = self::filters($filters);
+            return Db::getInstance()->query($sql);
+      }
+
+      public static function findOneBy(array $filters)
+      {
+            $sql = self::filters($filters);
+            return Db::getInstance()->getRow($sql);
+      }
+
+      public function create($data)
+      {
+      }
+      private function getPreparedDatas($datas)
+      {
+            $str = [];
+            $types = [];
+            $values = [];
+            $keys = [];
+
+            foreach ($datas as $key => $value) {
+                  if (!isset($this->attributes[$key])) continue;
+
+                  $att = $this->attributes[$key];
+
+                  if (!$att->isID()) {
+                        $str[] = "`" . $att->getDbName() . "` = ?";
                   }
+                  $types[] = $att->getType();
+                  $values[] = $value;
+                  $keys[] = $att->getDbName();
             }
 
-            return count($missingDatas) > 0 ? (implode(', ', $missingDatas)) : [];
+            return array(
+                  'string' => implode(", ", $str),
+                  'types' => $types = implode("", $types),
+                  'values' => $values,
+                  'keys' => $keys,
+            );
       }
 
-      public function getAttr() {
-            return $this->attributes;
+      private function insert($datas)
+      {
       }
 
-      public static function find($id) {
-            $sql = "SELECT * FROM `".static::$tableS."` WHERE `id` = $id";
-            return Db::getInstance()->getRow($sql);
+      private function update($datas)
+      {
+            $prepared = $this->getPreparedDatas($datas);
+            $sql = "UPDATE `" . $this->_table . "` SET " . $prepared['string'] . " WHERE id = ?";
+
+            // bind params with keys and types
+            $stmt = Db::getInstance()->prepare($sql);
+            // $stmt->bind_param($types, ...$values);
+
+            Debug::ddAPI(array(
+                  'SQL' => $sql,
+                  'stmt' => $stmt,
+                  'types' => $prepared['types'],
+                  'values' => $prepared['values'],
+                  'keys' => $prepared['keys'],
+                  'error' => error_get_last(),
+            ));
+
+            // foreach ()
       }
 
-      public static function findAll() {
-            $sql = "SELECT * FROM `".static::$tableS."`";
+      public function upsert($data)
+      {
+            if (isset($data['id']) && !empty($data['id'])) {
+                  return $this->update($data);
+            }
+            return $this->insert($data);
+      }
+
+      public static function delete($id)
+      {
+      }
+
+      public static function query(string $sql)
+      {
             return Db::getInstance()->query($sql);
       }
-      
-      public static function findBy(array $filters) {
-            $sql = self::filters($filters);
-            return Db::getInstance()->query($sql);
-      }
-      
-      public static function findOneBy(array $filters) {
-            $sql = self::filters($filters);
-            return Db::getInstance()->getRow($sql);
-      }
-      
-      public static function create($data) {
-          
-      }
-      
-      public static function update($data) {
-          
-      }
-      
-      public static function delete($id) {
-          
-      }
-
-      public static function query(string $sql) {
-            return Db::getInstance()->query($sql);
-      }
-      
 }

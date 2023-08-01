@@ -1,10 +1,12 @@
 <?php
 
-class Db {
+class Db
+{
     private $conn;
     private static $instance = null;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance == null) {
             self::$instance = new Db();
         }
@@ -23,11 +25,29 @@ class Db {
         return $this->conn;
     }
 
-    public function query($sq) {
+    public static function scapeString(string $str)
+    {
+        return Db::getInstance()->getConnection()->real_escape_string($str);
+    }
+
+    public function scape(string $str)
+    {
+        return $this->conn->real_escape_string($str);
+    }
+
+    public function prepare($sql)
+    {
+        return $this->conn->prepare($sql);
+    }
+
+
+    public function query($sq)
+    {
         $finalResult = array();
         $result = $this->conn->query($sq);
 
-        if ($result && $result->num_rows > 0) {
+
+        if ($result->num_rows > 0) {
             foreach ($result as $res) {
                 $finalResult[] = $res;
             }

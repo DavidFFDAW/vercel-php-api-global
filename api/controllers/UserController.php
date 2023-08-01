@@ -10,7 +10,7 @@ class UserController extends BaseController
 
         $foundUser = User::findOneBy([array('email', '=', "'" . $body->email . "'")]);
         if (!$foundUser || empty($foundUser)) throw new ApiException("User was not found with this email");
-        $isCorrect = BcryptService::verify($body->password, $foundUser['password']);
+        $isCorrect = PasswordService::verify($body->password, $foundUser['password']);
 
         if (!$isCorrect) throw new ApiException("Password or email are incorrect");
         unset($foundUser['password']);
