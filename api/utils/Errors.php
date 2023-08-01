@@ -6,6 +6,10 @@ class Errors
     {
         return json_encode(array(
             'code' => $e->getStatusCode(),
+            'trace' => array(
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ),
             'message' => $e->getMessage(),
             'error' => $e->getMessage(),
             'type' => 'Server error',
@@ -17,6 +21,10 @@ class Errors
     {
         return json_encode(array(
             'code' => 500,
+            'trace' => array(
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ),
             'message' => $e->getMessage(),
             'error' => $e->getMessage(),
             'type' => 'Server error',
