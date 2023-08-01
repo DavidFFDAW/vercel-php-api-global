@@ -82,10 +82,7 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
             return Db::getInstance()->getRow($sql);
       }
 
-      public function create($data)
-      {
-      }
-      private function getPreparedDatas($datas)
+      private function getPreparedDatas($datas, $insert = false)
       {
             $str = [];
             $types = [];
@@ -98,16 +95,18 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
                   $att = $this->attributes[$key];
 
                   if (!$att->isID()) {
-                        $str[] = "`" . $att->getDbName() . "` = ?";
+                        $insertSQ = $insert ? "?" : ("`" . $att->getDbName() . "` = ?");
+                        
+                        $str[] = $insertSQ;
+                        $types[] = $att->getType();
+                        $values[] = $value;
+                        $keys[] = $att->getDbName();
                   }
-                  $types[] = $att->getType();
-                  $values[] = $value;
-                  $keys[] = $att->getDbName();
             }
 
             return array(
                   'string' => implode(", ", $str),
-                  'types' => $types = implode("", $types),
+                  'types' => implode("", $types),
                   'values' => $values,
                   'keys' => $keys,
             );
@@ -115,27 +114,42 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
 
       private function insert($datas)
       {
+            $prepared = $this->getPreparedDatas($datas, true);
+            $sql = "INSERT INTO `".$this->_table . "` (`".implode('`, `', $prepared['keys'])."`) VALUES (". $prepared['string'].")";
+
+            $stmt = Db::getInstance()->prepare($sql);
+            $stmt->bind_param($prepared['types'], ...$prepared['values']);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $isInserted = !empty($stmt->insert_id);
+
+            return array(
+                  'result' => $result,
+                  'upserted' => $isInserted,
+            );
       }
 
       private function update($datas)
       {
+            if (!isset($datas['id']) || empty($datas['id'])) throw new ApiException("Not id received");
+
             $prepared = $this->getPreparedDatas($datas);
             $sql = "UPDATE `" . $this->_table . "` SET " . $prepared['string'] . " WHERE id = ?";
 
-            // bind params with keys and types
             $stmt = Db::getInstance()->prepare($sql);
-            // $stmt->bind_param($types, ...$values);
+            $values = array(...$prepared['values'], $datas['id']);
+            $stmt->bind_param($prepared['types'].'i', ...$values);
+            
+            $stmt->execute();
 
-            Debug::ddAPI(array(
-                  'SQL' => $sql,
-                  'stmt' => $stmt,
-                  'types' => $prepared['types'],
-                  'values' => $prepared['values'],
-                  'keys' => $prepared['keys'],
-                  'error' => error_get_last(),
-            ));
+            $result = $stmt->get_result();
+            $isUpdated = $stmt->affected_rows > 0;
 
-            // foreach ()
+            return array(
+                  'result' => $result,
+                  'upserted' => $isUpdated,
+            );
       }
 
       public function upsert($data)
@@ -148,6 +162,16 @@ abstract class BaseModel extends QueryBuilder implements ModelInterface
 
       public static function delete($id)
       {
+            $sql  = "DELETE FROM ". static::$tableS ." WHERE `id` = ?";
+            $stmt = Db::getInstance()->prepare($sql);
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            return array(
+                  'result' => $result,
+                  'deleted' => $stmt->affected_rows > 0,
+            );
       }
 
       public static function query(string $sql)
