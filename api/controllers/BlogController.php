@@ -3,12 +3,14 @@
 class BlogController extends BaseController
 {
 
-      public function getBlogPosts() {
+      public function getBlogPosts()
+      {
             $blogPosts = Blog::findAll();
             return $this->response($blogPosts, "posts", 200);
       }
-      
-      public function getSingleBlogPost(Request $request) {
+
+      public function getSingleBlogPost(Request $request)
+      {
             $id = $this->getTheRequestID($request);
             $singlePost = Blog::find($id);
 
