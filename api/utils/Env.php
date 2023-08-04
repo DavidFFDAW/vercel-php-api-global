@@ -36,11 +36,6 @@ class Env
       {
             $env = self::getVars(DEV);
 
-            Debug::ddAPI(array(
-                  'env' => $env,
-                  'dev' => DEV,
-            ));
-
             return array(
                   'DB_HOST' => isset($env['DB_HOST']) ? $env['DB_HOST'] : '',
                   'DB_USER' => isset($env['DB_USER']) ? $env['DB_USER'] : '',
