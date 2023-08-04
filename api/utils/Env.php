@@ -19,9 +19,9 @@ class Env
             return $vars;
       }
 
-      private static function getVars($isDev)
+      private static function getVars()
       {
-            if ($isDev) return self::getEnvFileVars();
+            if (DEV) return self::getEnvFileVars();
 
             return array(
                   'DB_USER' => getenv('DB_USER'),
