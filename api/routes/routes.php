@@ -19,3 +19,13 @@ $router->get("$common/wrestlers/single/{id}", WrestlerController::class, 'getSin
 $router->post("$common/wrestlers/upsert", WrestlerController::class, 'upsert', [AuthMiddleware::class]);
 $router->put("$common/wrestlers/status/change", WrestlerController::class, 'statusChange', [AuthMiddleware::class]);
 $router->delete("$common/wrestlers/delete/{id}", WrestlerController::class, 'delete', [AuthMiddleware::class]);
+
+/** CHAMPIONSHIP AND REIGNS ROUTES */
+$router->get("$common/championships/reigns/all", ChampionReignController::class, 'getAll');
+$router->get("$common/championships/reign/single/{id}", ChampionReignController::class, 'getSingleReign');
+
+/** TEAM ROUTES */
+$router->get("$common/teams/", ChampionReignController::class, 'getAll');
+
+/** TWITTER ROUTES */
+$router->get("$common/twitter/all", ChampionReignController::class, 'getAll');
