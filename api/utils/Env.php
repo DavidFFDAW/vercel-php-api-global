@@ -24,6 +24,7 @@ class Env
             if (DEV) return self::getEnvFileVars();
 
             return array(
+                  'DB_HOST' => getenv('DB_HOST'),
                   'DB_USER' => getenv('DB_USER'),
                   'DB_PWD' => getenv('DB_PWD'),
                   'FTP_USER' => getenv('FTP_USER'),
