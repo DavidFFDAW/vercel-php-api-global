@@ -24,7 +24,7 @@ class Errors
             'trace' => array(
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'stack_trace' => $e->getStackTrace(),
+                'stack_trace' => $e->getTraceAsString(),
             ),
             'message' => $e->getMessage(),
             'error' => $e->getMessage(),
