@@ -16,6 +16,11 @@ class Db
     private function __construct()
     {
         $env = Env::getEnvVars();
+        Debug::ddAPI(array(
+            'HOST' => $env['DB_HOST'], 
+            'USER' => $env['DB_USER'], 
+            'PAWD' => $env['DB_PWD']
+        ));
         $this->conn = new mysqli($env['DB_HOST'], $env['DB_USER'], $env['DB_PWD'], 'wwe_2k');
         $this->conn->set_charset('utf8');
     }
