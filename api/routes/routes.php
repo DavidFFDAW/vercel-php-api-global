@@ -25,7 +25,15 @@ $router->get("$common/championships/reigns/all", ChampionReignController::class,
 $router->get("$common/championships/reign/single/{id}", ChampionReignController::class, 'getSingleReign');
 
 /** TEAM ROUTES */
-$router->get("$common/teams/", ChampionReignController::class, 'getAll');
+$router->get("$common/teams/", TeamController::class, 'getAll');
+$router->get("$common/teams/members", TeamController::class, 'getAllTeamsWithMembers');
+$router->get("$common/teams/team/{id}", TeamController::class, 'getSingleTeam');
+$router->get("$common/teams/team/members/{id}", TeamController::class, 'getSingleTeamWithMembersById');
+$router->post("$common/teams/create/team", TeamController::class, 'upsertTeam', [AuthMiddleware::class]);
 
 /** TWITTER ROUTES */
-$router->get("$common/twitter/all", ChampionReignController::class, 'getAll');
+$router->get("$common/twitter/", TwitterController::class, 'getAllTweetsWithReplies');
+$router->get("$common/twitter/admin/tweets/list", TwitterController::class, 'getAdminAllTweets');
+$router->get("$common/twitter/tweet/{id}", TwitterController::class, 'getSingleTweetWithReplies');
+$router->post("$common/twitter/tweet/upsert", TwitterController::class, 'upsertTweet', [AuthMiddleware::class]);
+$router->delete("$common/twitter/tweet/delete/{id}", TwitterController::class, 'deleteTweet', [AuthMiddleware::class]);
