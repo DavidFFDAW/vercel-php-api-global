@@ -46,6 +46,18 @@ class Request
             return trim($token);
       }
 
+      public function checkBodyParams(array $paramKeys)
+      {
+            $bodyArray = (array) $this->body;
+
+            foreach ($paramKeys as $key) {
+                  if (!isset($bodyArray[$key]) || empty($bodyArray[$key])) {
+                        throw new ApiException("$key is missing on body");
+                        break;
+                  }
+            }
+      }
+
       public function getURI()
       {
             return $this->URI;
