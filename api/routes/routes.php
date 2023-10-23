@@ -5,6 +5,7 @@ $router = new Router($request);
 $common = "/api/2k";
 
 /* BLOG ROUTES */
+$router->get("/api/", DocController::class, 'getDocs');
 $router->get("$common/blog/all", BlogController::class, 'getBlogPosts');
 $router->get("$common/blog/single/post/{id}", BlogController::class, 'getSingleBlogPost');
 
